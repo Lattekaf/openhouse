@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
-@Autonomous(name = "Webcam AprilTag ExampleX")
+@Autonomous(name = "Webcam AprilTag ExampleXX")
 public class webcamExample extends OpMode {
 
 
