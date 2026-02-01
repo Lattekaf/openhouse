@@ -26,11 +26,20 @@ public  class Tele extends Robot {
 
     // Variables
     String Status;
+
+    double speed = 0.3;
+
+    boolean pressX = false;
+    boolean stateX = false;
+
+
     double setpoint = 0, S = 1;
     boolean  PS_Pressed = false, PSisBusy = false, T_Pressed = false, TisBusy = false, RB_Pressed = false, RBisBusy = false ;
     boolean circlePress = false;
     boolean circleState = false; ///
     boolean xPress = false;
+    boolean TPress = false;
+    boolean TState = false;
     boolean xState = false;
 
     long lastTime = 0;
@@ -41,8 +50,8 @@ public  class Tele extends Robot {
     private void Init() {
         // Initialize Robot
         Initialize();
-
-        controller = new Controller(1.00, 0.05, 0.05, 0 , 0.2, toRadian(1), 1.0, -1.0);
+         // kp 1 ki 0.05 kd 0.05 kf 0
+        controller = new Controller(1.2, 0.08, 0.025, 0 , 0.2, toRadian(1), 1.0, -1.0);
         ShooterController = new Controller(0.01, 0.0000000005, 0.01, 0.00049, 0.0, 50, 50.0, -50.0);
 
         setpoint = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
@@ -51,7 +60,7 @@ public  class Tele extends Robot {
 
     private void Movement() {
         CurrentTime = System.nanoTime() * 1E-9;
-        double speed = 0.1; //0.3
+        //double speed = 0.1; //0.3
         double lx = -gamepad1.left_stick_x;
         double ly = -gamepad1.left_stick_y;
         double x1 = gamepad1.dpad_right ? -speed : gamepad1.dpad_left ? speed : lx;
@@ -78,6 +87,54 @@ public  class Tele extends Robot {
 
     }
 
+    /*void AdjustSpeed(boolean button) {
+
+        if (!button) {
+            pressX = false;
+            return;
+        }
+
+        if (pressX) return;
+        pressX = true;
+
+        if (!stateX) {
+            speed = 0.1;
+            stateX = true;
+            return;
+        }
+
+        speed = 0.3;
+        stateX = false;
+    }*/
+    private void ToggleT(boolean button) {
+
+        if (!button) {
+            TPress = false;
+            return;
+        }
+
+        if (TPress) return;
+        TPress = true;
+
+        TState = !TState;
+
+        if (TState) {
+            speed = 0.1;
+
+        } else {
+            speed = 0.3;
+
+        }
+    }
+
+
+
+
+
+
+
+
+
     private void RunServoLoop() {
 
         if (!circleState) return;
@@ -88,9 +145,14 @@ public  class Tele extends Robot {
             servoPos = !servoPos;
 
             if (servoPos) {
-                SetServoPos(0.17, ser1);
+                SetServoPos(0.05, ser1);
+                SetServoPos(0.20, ser2);
+                SetServoPos(0, ser3);
             } else {
-                SetServoPos(-0.10, ser1);
+                SetServoPos(0, ser1);
+                SetServoPos(0, ser2);
+                SetServoPos(0.20, ser3);
+
             }
         }
     }
@@ -107,9 +169,11 @@ public  class Tele extends Robot {
         xState = !xState;
 
         if (xState) {
-            SetServoPos(0.70, ser2);
+            SetServoPos(0.20, ser2);
+
         } else {
-            SetServoPos(0.40, ser2);
+            SetServoPos(0, ser2);
+
         }
     }
     private void ToggleCircle(boolean button) {
@@ -126,7 +190,9 @@ public  class Tele extends Robot {
 
         // สำคัญมาก: ตอนปิด สั่งหยุดครั้งเดียว
         if (!circleState) {
-            SetServoPos(0.12, ser1);
+            SetServoPos(0.0, ser1);
+            SetServoPos(0.20, ser2);
+            SetServoPos(0.0, ser3);
             servoPos = false;
         }
     }
@@ -204,6 +270,7 @@ public  class Tele extends Robot {
         if (opModeIsActive()) {
             while (opModeIsActive()) {
                 Movement();
+                ToggleT(gamepad1.triangle);
                 ToggleCircle(gamepad1.circle);
                 ToggleX(gamepad1.square);
                 //Toggle3(gamepad1.square);

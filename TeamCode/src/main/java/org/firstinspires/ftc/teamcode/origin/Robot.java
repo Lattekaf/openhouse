@@ -103,8 +103,9 @@ public abstract class Robot extends LinearOpMode {
 
 
         // SetBehavior Motors
-        SetServoPos(0.12, ser1);
-        SetServoPos(1, ser2);
+        SetServoPos(0.0, ser1); //0.12
+        //SetServoPos(0.20, ser2);
+        SetServoPos(0.0, ser2);
         SetServoPos(0.0, ser3);
         sleep(20);
     }
